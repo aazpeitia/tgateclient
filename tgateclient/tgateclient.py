@@ -19,7 +19,7 @@ class TGateClient(object):
         timestamp = now.strftime("%Y-%m-%dT%H:%M:%SZ")
         arguments = ''.join(args)
         datastring = '{}{}{}'.format(timestamp, arguments, operation)
-        data = hmac.new(six.b(self.password), six.b(datastring), hashlib.sha512).hexdigest()
+        data = hmac.new(six.text_type(self.password, 'utf-8').encode('utf-8'), six.b(datastring), hashlib.sha512).hexdigest()
         headers = {
             'client': self.username,
             'timestamp': timestamp,
