@@ -31,6 +31,11 @@ def test_upload_html(client):
     assert 'data' in response
     assert isinstance(response.get('data', {}), dict)
     assert 'id' in response.get('data', {})
+    # clean
+    document_id = response.get('data', {}).get('id', {})
+    if document_id:
+        client.remove(document_id)
+
 
 def test_upload_docx(client):
     testdocx = os.path.dirname(os.path.abspath(__file__)) + '/files/' + 'test1.docx'
@@ -41,6 +46,11 @@ def test_upload_docx(client):
     assert 'data' in response
     assert isinstance(response.get('data', {}), dict)
     assert 'id' in response.get('data', {})
+    # clean
+    document_id = response.get('data', {}).get('id', {})
+    if document_id:
+        client.remove(document_id)
+
 
 def test_download_unkown_document(client):
     response = client.download('this-is-an-unkown-document-id')
@@ -60,6 +70,9 @@ def test_download_uploaded_document(client):
     assert 'data' in response
     assert 'id' in response.get('data', {})
     assert response.get('data', {}).get('id').startswith('http')
+
+    # clean
+    client.remove(document_id)
 
 def test_remove_unkown_document(client):
     response = client.remove('this-is-an-unkown-document-id')
@@ -98,6 +111,10 @@ def test_get_document_properties_uploaded_document(client):
     assert 'data' in response
     assert 'id' in response.get('data', {})
     assert response.get('data', {}).get('id')
+    # clean
+    if document_id:
+        client.remove(document_id)
+
 
 def test_get_document_status_unknown_document(client):
     response = client.get_document_status('this-is-an-unkown-document-id')
@@ -117,8 +134,12 @@ def test_get_document_status_uploaded_document_ready_to_translate(client):
     assert 'data' in response
     assert 'id' in response.get('data', {})
     assert response.get('data', {}).get('id') == 'READY'
+    # clean
+    if document_id:
+        client.remove(document_id)
 
-@pytest.mark.xfail
+
+
 def test_get_document_status_uploaded_document_translating(client):
     testdocx = os.path.dirname(os.path.abspath(__file__)) + '/files/' + 'test6.docx'
     response = client.upload(testdocx)
@@ -136,8 +157,17 @@ def test_get_document_status_uploaded_document_translating(client):
     assert 'data' in response
     assert 'id' in response.get('data', {})
     assert response.get('data', {}).get('id') == 'TRANSLATING'
+    # clean
+    if document_id:
+        client.remove(document_id)
 
 def test_get_document_id(client):
+    testdocx = os.path.dirname(os.path.abspath(__file__)) + '/files/' + 'test.docx'
+    response = client.upload(testdocx)
+    result = response.get('data', {})
+    document_id = result.get('id', None)
+    assert 'status' in response
+    assert response.get('status', '') == 'success'
     response = client.get_document_id('test.docx')
     assert isinstance(response, dict)
     assert 'status' in response
@@ -145,6 +175,10 @@ def test_get_document_id(client):
     assert 'data' in response
     assert 'id' in response.get('data', {})
     assert response.get('data', {}).get('id', '')
+    # clean
+    if document_id:
+        client.remove(document_id)
+
 
 def test_get_models(client):
     models_answer = client.models()
@@ -155,7 +189,7 @@ def test_get_models(client):
     assert 'models' in models_answer
     assert isinstance(models_answer.get('models', []), list)
 
-@pytest.mark.xfail
+
 def test_translate_document(client):
     testdocx = os.path.dirname(os.path.abspath(__file__)) + '/files/' + 'test7.docx'
     response = client.upload(testdocx)
@@ -169,7 +203,10 @@ def test_translate_document(client):
     assert response.get('status', '') == 'success'
     assert 'data' in response
     assert 'id' in response.get('data', {})
-    assert response.get('data', {}).get('id') == document_id
+    assert response.get('data', {}).get('id')
+    # clean
+    if document_id:
+        client.remove(document_id)
 
 
 def test_translate_string(client):
