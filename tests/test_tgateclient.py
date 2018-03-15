@@ -145,7 +145,7 @@ def test_get_document_status_uploaded_document_translating(client):
     response = client.upload(testdocx)
     result = response.get('data', {})
     document_id = result.get('id', None)
-    model_id = 'en2es'
+    model_id = 'generic_en2es'
     tr_mode = 'MachineTranslation'
     response = client.translate_document(document_id, model_id, tr_mode)
     assert 'status' in response
