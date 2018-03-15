@@ -1,29 +1,13 @@
-# Config file for automatic testing at travis-ci.org
-
 language: python
 python:
-  - 3.6
-  - 3.5
-  - 3.4
-  - 2.7
-
-# Command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
+- 3.6
+- 3.5
+- 3.4
+- 2.7
 install: pip install -U tox-travis
-
-# Command to run tests, e.g. python setup.py test
 script: tox
-
-# Assuming you have installed the travis-ci CLI tool, after you
-# create the Github repo and add it to Travis, run the
-# following command to finish PyPI deployment setup:
-# $ travis encrypt --add deploy.password
-# deploy:
-#   provider: pypi
-#   distributions: sdist bdist_wheel
-#   user: erral
-#   password:
-#     secure: PLEASE_REPLACE_ME
-#   on:
-#     tags: true
-#     repo: erral/tgateclient
-#     python: 3.6
+env:
+  matrix:
+  - secure: 4E+qhF2EbHAYoiAwOv9jTGo9EtpMca2X65nzbeNsHWMVmibApysRC6oiWRfYgVr4No4PnL5GMenCsZLzYGK+Ui/7mevxbZh0KhGRvc0l3+I7Krww3KnbUp3uJSGNgsu8TWtsklNQ/EjF/bB0azDuXnU9f8nZ3HPKk2Bu62StElpwk3MEsXpbMFvajVzIPHErU4wWS6MTYFULp7apsf2h0c8ndvFAFOH6zsQbMFwAw3e/U+yET+UiHF85wD1Fy1COSODxxRix0nu5sGtKiMOLirZSFR9sfxj0mhoNfdr5RE1eZUijOjG0B+rCou27PsOfBOMCY3bMLJVIKfwM5gbhq9O1zqlpq8jhXDxxrcD9NDEDSZUJ7EW+IQV3G7SUB3xz9dcAgDUR8YiY1qHXxVhvBQuGAwXdcx2kvYX6NzP59gVXivJZOAA5qSbQ9EXxU20uS4vg9jKPRRERtAKjrRzWemrsPFA1bquSMURaykZWhL9669948k8y6YLM31O/pjS2J7WK9NZdBOkg5ZLbypBhrtDVocebYMSmjDDLfKihrfMFQxZ6nKn7ZGo9zWVZ2jkmFgU1ocNGHSU0NhqQ3nNPdAIG4encuEyuwnGJ57EyzgVvoXvBPvsa/iyEsh8LjDII68yNMmE9C9wy3S284EiM77JgYXd6F5qUEapFYjT0x5Q=
+  - secure: dSFnHKnXTz+XG3vlOkvyphHGa0m4nAixhcO2s4OwMcQ2e3vPiRFDoOqHTRQEdiGcqHEHm6VeEkDyw5DVijXNPIe+ftwDT9Pm2VBQqDcGDj94ZBqELw3VB5N+hX20eSBE1JGtaoT2mlJVggzOFQM00jwacR4ZbI6wpZkWStFrd8nEgTfniqDHIZ18cDBH0pm41hOyacjvGG4PTbwcIIKA2BChQdyFNlMtlIdUIxOzFahQCfOG5mly+IgH+TOpIh6L5MDLYg2L53cihiiOYfeBgYEhiDLDfXHSyhWltEMuh8Ezz1zjZSU5WJ/6V+E76iO0HOGeaqNDfZNChsadEUWz0MQ3XUzvOutZgZWwmScZX6AKlCkoTuVQtCFFoOsYm1g5Cs2vR57rFpLTtePlrVdr1Bc41UHLrkIfJGvcejHNJSjG51j8J/cdiQodXi5PJaegZMPCttw54K96Di1hFIqRWHMdTKn3VK8eNqu2WwYnKk415Ldyw3vpNCvPUW9SUBFietPXo6wh2YznD6DR7Ls7f/qSdVbnXhx69aWsztH4ntWhchtJOAmHdwWWtXPsx6UPG+flhV1bJNHQ9oy13BFrS+BX75KVHd70W+GFfvgHRV/4aesUxUdTkAhWD+2O5BsLe7T3N+SuOcStZZH8ljmcRJmlYbPvKjchaHxlTRd55V4=
+  - secure: z2lfFeJBDVPeqxMLgk+IeQQ1L5Gh38dVyzQGxhMFPuq0MSRZa13wF+ykpFm4Fz0nhaR5Pz74qXwWowiaKM+9nqN7Y3duAlxNkb+/cbs5tigIqFAF4vVoH5Zvq0/8Gu/wSOMo0Y81HODO9Jqsc8wz0gETUYKA89Bonid0hFg0/WlokiikpJZf2QHvbIYJQfDbtU8gM1+mqnV0q9Gq5NRshvFjRipepKDfypc8WbFM+AUgD0ekWPUADf9PVO3gxztgArpLvGeeGG/z9Ak3fFI4uvEJidl2preLprhp/VG/ePhodcW7+aYhp19UhJY95Vqi8thez0ySR6m0cYs6bYMBqH7G/mZ5UgYQqnk8HkGuV18pzWkJKtDDTHqCQ4hm5G8P03yNhnBwZJoGu9aYeQrVEuxzt38GTM6rCP88RC1C+wIIduS+1045RYEeIQwRAL0tRO6EkB19krH9KhiDBjTq/CmCZ6NtfX0SHELjVo7U2trxzlEBZjM6YiPy6BeqzAyWQhKlh2KQw7nNJqrkfsH162MdsjjNHZ0L3u3vwnCjiH08fcsF6aZHD1NR+G1hzmg3VLcM5mK190VB9nKDaz+uyUwyphXlrgfRL47jstPix5Mo3ChbvT7G9wRcF9nojnJ4YyolLCPrLW/UGFdFG2hSfkO2mu3jPtcIuXZ/GJHGO8g=
