@@ -17,7 +17,7 @@ class TGateClient(object):
         now = datetime.datetime.utcnow()
         timestamp = now.strftime("%Y-%m-%dT%H:%M:%SZ")
         arguments = ''.join(args)
-        datastring = '{}{}{}'.format(timestamp, arguments, operation)
+        datastring = b'{}{}{}'.format(timestamp, arguments, operation)
         data = hmac.new(self.password, datastring, hashlib.sha512).hexdigest()
         headers = {
             'client': self.username,
