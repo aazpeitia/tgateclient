@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
-
-"""Main module."""
-# -*- coding: utf-8 -*-
 import datetime
 import hashlib
 import hmac
-import httplib
-import logging
 import os
 import requests
+
+TIMEOUT = 5
 
 class TGateClient(object):
     def __init__(self, url, username, password):
@@ -47,18 +44,90 @@ class TGateClient(object):
         headers = self._build_headers(operation, os.path.basename(filename))
         files = {'file': (os.path.basename(filename), open(filename, 'rb'), 'application/octet-stream')}
         response = requests.post(url, files=files, headers=headers)
-        print(response.status_code)
-        print(response.content)
+        if response.status_code == 200:
+            return response.json()
+
+    def download(self, document_id):
+        operation = 'translate/download'
+        url = self._build_url(operation)
+        headers = self._build_headers(operation, document_id)
+        json = {'id': document_id}
+        response = requests.post(url, json=json, headers=headers, timeout=TIMEOUT)
+        if response.status_code == 200:
+            return response
+        else:
+            return {}
+
+    def remove(self, document_id):
+        operation = 'translate/remove_document'
+        url = self._build_url(operation)
+        headers = self._build_headers(operation, document_id)
+        json = {'id': document_id}
+        response = requests.post(url, json, headers=headers, timeout=TIMEOUT)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return {}
+
+    def get_document_properties(self, document_id):
+        operation = 'translate/properties'
+        url = self._build_headers(operation)
+        headers = self._build_headers(operation, document_id)
+        json = {'id': document_id}
+        response = requests.post(url, json, headers=headers, timeout=TIMEOUT)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return {}
+
+    def get_document_status(self, document_id):
+        operation = 'translate/status'
+        url = self._build_headers(operation)
+        headers = self._build_headers(operation, document_id)
+        json = {'id': document_id}
+        response = requests.post(url, json, headers=headers, timeout=TIMEOUT)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return {}
+
+    def get_document_id(self, filename):
+        operation = 'translate/document_id'
+        url = self._build_headers(operation)
+        headers = self._build_headers(operation, filename)
+        json = {'filename': filename}
+        response = requests.post(url, json, headers=headers, timeout=TIMEOUT)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return {}
+
 
     def models(self):
         operation = 'translate/models'
         url = self._build_url(operation)
         headers = self._build_headers(operation)
-        response = requests.get(url, headers=headers, timeout=3)
+        response = requests.get(url, headers=headers, timeout=TIMEOUT)
         if response.status_code == 200:
             return response.json()
         else:
             return {}
+
+    def translate_document(self, document_id, model_id, tr_mode):
+        operation = 'translate/translate_document'
+        url = self._build_url(operation)
+        headers = self._build_headers(operation, document_id, model_id)
+        json = {
+            'document_id': document_id,
+            'model_id': model_id,
+            'tr_mode': tr_mode,
+        }
+        response = requests.post(url, json=json, headers=headers, timeout=TIMEOUT)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return {}
+
 
     def translate_string(self, text, model_id, tr_mode, mime_type):
         operation = 'translate/translate_string'
@@ -71,7 +140,7 @@ class TGateClient(object):
             'mime': mime_type
         }
         response = requests.post(url, json=json, headers=headers, timeout=2)
-        print(response.status_code)
-        print(response.content)
-
-
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return {}
