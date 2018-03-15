@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """Tests for `tgateclient` package."""
-from tgateclient import tgateclient
+from tgateclient.client import TGateClient
 
 import os
 import six
@@ -14,7 +14,7 @@ def client():
     server_name = os.environ.get('TGATE_SERVER_URL')
     username = os.environ.get('TGATE_USERNAME')
     password = os.environ.get('TGATE_PASSWORD')
-    return tgateclient.TGateClient(server_name, username, password)
+    return TGateClient(server_name, username, password)
 
 
 def test_hello(client):
