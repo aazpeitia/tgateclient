@@ -8,6 +8,14 @@ import six
 
 TIMEOUT = 5
 
+
+def safe_encode(value):
+    if isinstance(value, six.text_type):
+        return value.encode('utf-8')
+    else:
+        return value
+
+
 class TGateClient(object):
     def __init__(self, url, username, password):
         self.base_url = url
@@ -19,7 +27,7 @@ class TGateClient(object):
         timestamp = now.strftime("%Y-%m-%dT%H:%M:%SZ")
         arguments = ''.join(args)
         datastring = '{}{}{}'.format(timestamp, arguments, operation)
-        data = hmac.new(six.text_type(self.password, 'utf-8').encode('utf-8'), six.b(datastring), hashlib.sha512).hexdigest()
+        data = hmac.new(safe_encode(self.password), six.b(datastring), hashlib.sha512).hexdigest()
         headers = {
             'client': self.username,
             'timestamp': timestamp,
