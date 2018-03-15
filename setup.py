@@ -11,7 +11,7 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = [ ]
+requirements = ['requests']
 
 setup_requirements = ['pytest-runner', ]
 
@@ -43,7 +43,7 @@ setup(
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
-    url='https://github.com/erral/tgateclient',
+    url='https://github.com/codesyntax/tgateclient',
     version='1.0.0',
     zip_safe=False,
 )
