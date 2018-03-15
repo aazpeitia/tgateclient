@@ -5,6 +5,7 @@
 from tgateclient import tgateclient
 
 import os
+import six
 import pytest
 
 
@@ -18,7 +19,7 @@ def client():
 
 def test_hello(client):
     hello_answer = client.hello()
-    assert "Translation Service says: hello" in hello_answer
+    assert six.b("Translation Service says: hello") in hello_answer
 
 @pytest.mark.xfail
 def test_upload_html(client):

@@ -4,6 +4,7 @@ import hashlib
 import hmac
 import os
 import requests
+import six
 
 TIMEOUT = 5
 
@@ -17,8 +18,8 @@ class TGateClient(object):
         now = datetime.datetime.utcnow()
         timestamp = now.strftime("%Y-%m-%dT%H:%M:%SZ")
         arguments = ''.join(args)
-        datastring = b'{}{}{}'.format(timestamp, arguments, operation)
-        data = hmac.new(self.password, datastring, hashlib.sha512).hexdigest()
+        datastring = '{}{}{}'.format(timestamp, arguments, operation)
+        data = hmac.new(six.b(self.password), six.b(datastring), hashlib.sha512).hexdigest()
         headers = {
             'client': self.username,
             'timestamp': timestamp,
@@ -36,7 +37,7 @@ class TGateClient(object):
         if response.status_code == 200:
             return response.content
         else:
-            return None
+            return {}
 
     def upload(self, filename):
         operation = 'translate/upload'
