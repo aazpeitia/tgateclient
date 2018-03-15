@@ -139,8 +139,18 @@ class TGateClient(object):
             'tr_mode': tr_mode,
             'mime': mime_type
         }
-        response = requests.post(url, json=json, headers=headers, timeout=2)
+        response = requests.post(url, json=json, headers=headers)
         if response.status_code == 200:
-            return response.json()
+            result = response.json()
+            if result['status'] == 'success':
+                result['data']['translation'] = self._get_translation_from_result(result['data']['message'])
+
+            return result
         else:
             return {}
+
+    def _get_translation_from_result(self, text):
+        """translated text is inside the variable text, after the words 'target text:'
+        """
+        _, translation = text.split('target text:')
+        return translation
