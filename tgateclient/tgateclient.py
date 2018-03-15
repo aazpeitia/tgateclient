@@ -36,8 +36,10 @@ class TGateClient(object):
         operation = 'test/hello'
         url = self._build_url(operation)
         response = requests.get(url)
-        print(response.status_code)
-        print(response.content)
+        if response.status_code == 200:
+            return response.content
+        else:
+            return None
 
     def upload(self, filename):
         operation = 'translate/upload'
@@ -53,8 +55,10 @@ class TGateClient(object):
         url = self._build_url(operation)
         headers = self._build_headers(operation)
         response = requests.get(url, headers=headers, timeout=3)
-        print(response.status_code)
-        print(response.content)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return {}
 
     def translate_string(self, text, model_id, tr_mode, mime_type):
         operation = 'translate/translate_string'
