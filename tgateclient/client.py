@@ -55,6 +55,8 @@ class TGateClient(object):
         response = requests.post(url, files=files, headers=headers)
         if response.status_code == 200:
             return response.json()
+        else:
+            return {}
 
     def download(self, document_id):
         operation = 'translate/download'
