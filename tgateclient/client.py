@@ -11,7 +11,7 @@ TIMEOUT = 5
 
 def safe_encode(value):
     if isinstance(value, six.text_type):
-        return value.encode('utf-8')
+        return value.encode("utf-8")
     else:
         return value
 
@@ -25,21 +25,19 @@ class TGateClient(object):
     def _build_headers(self, operation, *args):
         now = datetime.datetime.utcnow()
         timestamp = now.strftime("%Y-%m-%dT%H:%M:%SZ")
-        arguments = ''.join(args)
-        datastring = '{}{}{}'.format(timestamp, arguments, operation)
-        data = hmac.new(safe_encode(self.password), six.b(datastring), hashlib.sha512).hexdigest()
-        headers = {
-            'client': self.username,
-            'timestamp': timestamp,
-            'data': data,
-        }
+        arguments = "".join(args)
+        datastring = "{}{}{}".format(timestamp, arguments, operation)
+        data = hmac.new(
+            safe_encode(self.password), six.b(datastring), hashlib.sha512
+        ).hexdigest()
+        headers = {"client": self.username, "timestamp": timestamp, "data": data}
         return headers
 
     def _build_url(self, operation):
         return self.base_url + operation
 
     def hello(self):
-        operation = 'test/hello'
+        operation = "test/hello"
         url = self._build_url(operation)
         response = requests.get(url)
         if response.status_code == 200:
@@ -48,10 +46,16 @@ class TGateClient(object):
             return {}
 
     def upload(self, filename):
-        operation = 'translate/upload'
+        operation = "translate/upload"
         url = self._build_url(operation)
         headers = self._build_headers(operation, os.path.basename(filename))
-        files = {'file': (os.path.basename(filename), open(filename, 'rb'), 'application/octet-stream')}
+        files = {
+            "file": (
+                os.path.basename(filename),
+                open(filename, "rb"),
+                "application/octet-stream",
+            )
+        }
         response = requests.post(url, files=files, headers=headers)
         if response.status_code == 200:
             return response.json()
@@ -59,21 +63,29 @@ class TGateClient(object):
             return {}
 
     def download(self, document_id):
-        operation = 'translate/download'
+        operation = "translate/download"
         url = self._build_url(operation)
         headers = self._build_headers(operation, document_id)
-        json = {'id': document_id}
+        json = {"id": document_id}
         response = requests.post(url, json=json, headers=headers, timeout=TIMEOUT)
         if response.status_code == 200:
             return response.json()
         else:
             return {}
 
+    def download_document(self, document_id):
+        response = self.download(document_id)
+        if response.get("status") == "success":
+            document_url = response.get("data", {}).get("id", "")
+            if document_url.startswith("http"):
+                data = requests.get(document_url)
+                return {"status": "success", "data": {"contents": data.content}}
+
     def remove(self, document_id):
-        operation = 'translate/remove_document'
+        operation = "translate/remove_document"
         url = self._build_url(operation)
         headers = self._build_headers(operation, document_id)
-        json = {'id': document_id}
+        json = {"id": document_id}
         response = requests.post(url, json=json, headers=headers, timeout=TIMEOUT)
 
         if response.status_code == 200:
@@ -82,10 +94,10 @@ class TGateClient(object):
             return {}
 
     def get_document_properties(self, document_id):
-        operation = 'translate/properties'
+        operation = "translate/properties"
         url = self._build_url(operation)
         headers = self._build_headers(operation, document_id)
-        json = {'id': document_id}
+        json = {"id": document_id}
         response = requests.post(url, json=json, headers=headers, timeout=TIMEOUT)
         if response.status_code == 200:
             return response.json()
@@ -93,10 +105,10 @@ class TGateClient(object):
             return {}
 
     def get_document_status(self, document_id):
-        operation = 'translate/status'
+        operation = "translate/status"
         url = self._build_url(operation)
         headers = self._build_headers(operation, document_id)
-        json = {'id': document_id}
+        json = {"id": document_id}
         response = requests.post(url, json=json, headers=headers, timeout=TIMEOUT)
         if response.status_code == 200:
             return response.json()
@@ -104,19 +116,18 @@ class TGateClient(object):
             return {}
 
     def get_document_id(self, filename):
-        operation = 'translate/document_id'
+        operation = "translate/document_id"
         url = self._build_url(operation)
         headers = self._build_headers(operation, filename)
-        json = {'filename': filename}
+        json = {"filename": filename}
         response = requests.post(url, json=json, headers=headers, timeout=TIMEOUT)
         if response.status_code == 200:
             return response.json()
         else:
             return {}
 
-
     def models(self):
-        operation = 'translate/models'
+        operation = "translate/models"
         url = self._build_url(operation)
         headers = self._build_headers(operation)
         response = requests.get(url, headers=headers, timeout=TIMEOUT)
@@ -126,36 +137,33 @@ class TGateClient(object):
             return {}
 
     def translate_document(self, document_id, model_id, tr_mode):
-        operation = 'translate/translate_document'
+        operation = "translate/translate_document"
         url = self._build_url(operation)
         headers = self._build_headers(operation, document_id, model_id)
-        json = {
-            'document_id': document_id,
-            'model_id': model_id,
-            'tr_mode': tr_mode,
-        }
+        json = {"document_id": document_id, "model_id": model_id, "tr_mode": tr_mode}
         response = requests.post(url, json=json, headers=headers, timeout=TIMEOUT)
         if response.status_code == 200:
             return response.json()
         else:
             return {}
 
-
     def translate_string(self, text, model_id, tr_mode, mime_type):
-        operation = 'translate/translate_string'
+        operation = "translate/translate_string"
         url = self._build_url(operation)
         headers = self._build_headers(operation, text, model_id, mime_type)
         json = {
-            'text': text,
-            'model_id': model_id,
-            'tr_mode': tr_mode,
-            'mime': mime_type
+            "text": text,
+            "model_id": model_id,
+            "tr_mode": tr_mode,
+            "mime": mime_type,
         }
         response = requests.post(url, json=json, headers=headers)
         if response.status_code == 200:
             result = response.json()
-            if result['status'] == 'success':
-                result['data']['translation'] = self._get_translation_from_result(result['data']['message'])
+            if result["status"] == "success":
+                result["data"]["translation"] = self._get_translation_from_result(
+                    result["data"]["message"]
+                )
 
             return result
         else:
@@ -164,5 +172,5 @@ class TGateClient(object):
     def _get_translation_from_result(self, text):
         """translated text is inside the variable text, after the words 'target text:'
         """
-        _, translation = text.split('target text:')
+        _, translation = text.split("target text:")
         return translation
